@@ -1,7 +1,16 @@
-const s = 'exss';
+import 'reflect-metadata';
+import { MovieService } from './services/MovieService';
 
-interface a{
-    str: string;
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const movie: any = {
+  name: 'Matrix 2',
+  types: ['action', 'AI'],
+  showRegions: ['Asia', 'UK'],
+  showTimeInMinutes: 400,
+};
 
-console.log(s);
+MovieService.add(movie).then((result) => {
+  console.log(result);
+});
+
+//TODO: express server

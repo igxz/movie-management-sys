@@ -1,1 +1,1 @@
-declare let s: string;
+import 'reflect-metadata';
