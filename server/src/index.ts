@@ -1,16 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 import { MovieService } from './services/MovieService';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const movie: any = {
-  name: 'Matrix 2',
-  types: ['action', 'AI'],
-  showRegions: ['Asia', 'UK'],
-  showTimeInMinutes: 400,
+const condition: any = {
+  page: 1,
+  limit: 5,
+  key: '_8',
 };
 
-MovieService.add(movie).then((result) => {
+MovieService.find(condition).then((result) => {
   console.log(result);
 });
+
 
 //TODO: express server

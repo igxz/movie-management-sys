@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { plainToClass, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
@@ -7,10 +7,10 @@ import {
   IsNotEmpty,
   Max,
   Min,
-  validate,
 } from 'class-validator';
+import { BaseEntity } from './BaseEntity';
 
-export class Movie {
+export class Movie extends BaseEntity{
   @IsNotEmpty({ message: 'movie name can not be empty' })
   @Type(() => String)
   name: string;
@@ -55,33 +55,19 @@ export class Movie {
     regions: string[],
     showTimeInMinutes: number
   ) {
+    super();
     this.name = name;
     this.types = types;
     this.showRegions = regions;
     this.showTimeInMinutes = showTimeInMinutes;
   }
 
-  /**
-   * validate movie object
-   */
-  async validateThis(): Promise<string[]> {
-    const errors = await validate(this);
-    const result: string[] = [];
-
-    errors.forEach((err) => {
-      if (err.constraints) {
-        result.push(...Object.values(err.constraints));
-      }
-    });
-
-    return result;
-  }
 
   /**
    * transform a plain object into a Movie object
    * @param plainObject 
    */
   public static transform(plainObject: object): Movie {
-    return plainToClass(Movie, plainObject);
+    return super.baseTransform(Movie, plainObject);
   }
 }
