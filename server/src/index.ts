@@ -1,16 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
-import { MovieService } from './services/MovieService';
+import Express from 'express';
+import MovieRouter from './routes/MovieRoute';
 
-const condition: any = {
-  page: 1,
-  limit: 5,
-  key: '_8',
-};
+const app = Express();
 
-MovieService.find(condition).then((result) => {
-  console.log(result);
-});
+app.use('/api/movie', MovieRouter);
 
-
-//TODO: express server
+app.listen(3001);

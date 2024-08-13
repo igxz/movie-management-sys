@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class */
+import { ParsedQs } from 'qs';
 import { MovieModel } from '../db';
 import { IMovie } from '../db/MovieSchema';
 import { ISearchResult } from '../entities/CommonTypes';
 import { Movie } from '../entities/Movie';
 import { SearchCondition } from '../entities/SearchCondition';
+
 export class MovieService {
   public static async add(movie: Movie): Promise<IMovie | string[]> {
     //1. class transformation
@@ -44,7 +46,7 @@ export class MovieService {
   }
 
   public static async find(
-    condition: SearchCondition
+    condition: Partial<SearchCondition> | ParsedQs
   ): Promise<ISearchResult<IMovie>> {
     //1. class transformation
     const conObj = SearchCondition.transform(condition);
