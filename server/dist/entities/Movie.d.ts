@@ -1,5 +1,6 @@
 import 'reflect-metadata';
-export declare class Movie {
+import { BaseEntity } from './BaseEntity';
+export declare class Movie extends BaseEntity {
     name: string;
     types: string[];
     showRegions: string[];
@@ -10,6 +11,5 @@ export declare class Movie {
     description?: string;
     poster?: string;
     constructor(name: string, types: string[], regions: string[], showTimeInMinutes: number);
-    validateThis(): Promise<string[]>;
     static transform(plainObject: object): Movie;
 }

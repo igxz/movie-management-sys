@@ -15,27 +15,41 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  // res.send(req.query);
-  // Transform req.query into an instance of SearchCondition
-  // const searchCondition = SearchCondition.transform(req.query);
-
-  // Pass the transformed object to the MovieService
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  //   const movies = await MovieService.find(req.query as any as SearchCondition);
   const movies = await MovieService.find(req.query);
   ResponseHelper.sendPagedData(movies, res);
 });
 
-router.post('/', (req, res) => {
-  res.send('post request');
+router.post('/', async (req, res) => {
+    const result = await MovieService.add(req.body);
+    if(Array.isArray(result)){
+        ResponseHelper.sendError(result, res);
+    }else{
+        ResponseHelper.sendData(`movie added successfully! id=${result._id}`, res);
+    }
 });
 
-router.put('/', (req, res) => {
-  res.send('put request');
+router.put('/:id', async (req, res) => {
+    try {
+        const movieId = req.params.id;
+        const result = await MovieService.update(movieId, req.body);
+        if(result.length > 0){
+            ResponseHelper.sendError(result, res);
+        }else{
+            ResponseHelper.sendData('movie updated successfully!', res);
+        }
+      } catch {
+        ResponseHelper.sendError('Invalid ID', res);
+      }
 });
 
-router.delete('/', (req, res) => {
-  res.send('delete request');
+router.delete('/:id', async (req, res) => {
+    try {
+        const movieId = req.params.id;
+        await MovieService.delete(movieId);
+        ResponseHelper.sendData('movie deleted successfully!', res);
+      } catch {
+        ResponseHelper.sendError('Invalid ID', res);
+      }
 });
 
 export default router;
