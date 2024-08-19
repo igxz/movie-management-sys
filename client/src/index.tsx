@@ -6,9 +6,11 @@ import { store } from './redux/store';
 import MovieAction from './redux/actions/MovieAction';
 
 
-store.dispatch(MovieAction.setLoadingAction(true));
+// store.dispatch(MovieAction.setLoadingAction(true));
 
-store.dispatch(MovieAction.setSearchCriteriaAction({page: 2}))
+// store.dispatch(MovieAction.setSearchCriteriaAction({page: 2}));
+
+store.dispatch(MovieAction.fetchMovies({page: 2}));
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
