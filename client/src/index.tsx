@@ -3,14 +3,24 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { store } from './redux/store';
-import MovieAction from './redux/actions/MovieAction';
+import MovieThunks from './redux/thunks/MovieThunks';
 
 
 // store.dispatch(MovieAction.setLoadingAction(true));
 
 // store.dispatch(MovieAction.setSearchCriteriaAction({page: 2}));
 
-store.dispatch(MovieAction.fetchMovies({page: 2}));
+// const test = async ()=>{
+//   await store.dispatch(MovieThunks.fetchMovies({page: 2}));
+//   await store.dispatch(MovieThunks.deleteMovie('66be9c14cfb14028eac100b1'));
+// };
+
+// await test();
+
+
+// store.dispatch(MovieAction.fetchMovies({page: 2}));
+
+// store.dispatch(MovieAction.deleteMovie('66bc07ba1723386a9c9517ef'));
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

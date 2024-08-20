@@ -20,6 +20,7 @@ export interface IMovieState {
   searchCriteria: IMovieSearchCriteria;
   total: number;
   isLoading: boolean;
+  totalPages: number;
 }
 
 const defaultState: IMovieState = {
@@ -31,6 +32,7 @@ const defaultState: IMovieState = {
   },
   total: 0,
   isLoading: false,
+  totalPages: 0,
 };
 
 const saveMovie: MovieReducer<SaveMoviesAction> = (
@@ -41,6 +43,7 @@ const saveMovie: MovieReducer<SaveMoviesAction> = (
     ...state,
     data: action.payload.movies,
     total: action.payload.total,
+    totalPages: Math.ceil(action.payload.total / state.searchCriteria.limit),
   };
 };
 
@@ -48,13 +51,17 @@ const setMovieSearchCriteria: MovieReducer<SetSearchConditionAction> = (
   state = defaultState,
   action
 ) => {
-  return {
+  const newState = {
     ...state,
     searchCriteria: {
       ...state?.searchCriteria,
       ...action.payload,
     },
   };
+  newState.totalPages = Math.ceil(
+    newState.total / newState.searchCriteria.limit
+  );
+  return newState;
 };
 
 const setIsLoading: MovieReducer<SetLoadingAction> = (
@@ -75,6 +82,7 @@ const deleteMovie: MovieReducer<DeleteMoviesAction> = (
     ...state,
     data: state.data.filter((m) => m._id !== action.payload),
     total: state.total - 1,
+    totalPages: Math.ceil((state.total - 1) / state.searchCriteria.limit),
   };
 };
 
