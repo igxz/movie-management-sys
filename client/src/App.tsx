@@ -1,11 +1,15 @@
 import React from 'react';
+import MainPage from './pages/MainPage';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div>
-      Hello world!
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='*' Component={MainPage}></Route>
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
