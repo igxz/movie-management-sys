@@ -1,19 +1,19 @@
-import React from 'react';
-
-// function App() {
-//   return (
-//     <div>
-//       Hello world!
-//     </div>
-//   );
-// }
+import React, { useEffect } from 'react';
+import { useAppDispatch } from '../../redux/store';
+import MovieTable from "../../components/MovieTable";
+import { fetchMovies } from '../../redux/thunks/MovieThunks'; // Import the fetchMovies thunk
 
 const MovieList: React.FC = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    // Dispatch the fetchMovies thunk when the component mounts
+    dispatch(fetchMovies({ page: 1, limit: 40, key: '' })); // Example of search conditions
+  }, [dispatch]); // Empty dependency array to run once on mount
+
   return (
-    <h1>
-      Movie List Page
-    </h1>
-  )
+    <MovieTable />
+  );
 }
 
 export default MovieList;

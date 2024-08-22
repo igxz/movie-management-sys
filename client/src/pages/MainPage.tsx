@@ -18,6 +18,9 @@ const containerStyle: React.CSSProperties = {
 const headerStyle: React.CSSProperties = {
   textAlign: 'center',
 };
+const contentStyle: React.CSSProperties = {
+  padding: '2em',
+};
 
 const MainPage: React.FC = () => (
   <div style={containerStyle}>
@@ -40,7 +43,7 @@ const MainPage: React.FC = () => (
           </Menu>
         </Sider>
         <Content>
-          <div>
+          <div style={contentStyle}>
             <Routes>
               <Route path='/' Component={Home}></Route>
               <Route path='/movie' Component={MovieList}></Route>

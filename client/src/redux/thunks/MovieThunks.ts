@@ -50,7 +50,7 @@ const deleteMovie = (
   };
 };
 
-export default {
+export {
   fetchMovies,
   deleteMovie,
 };
