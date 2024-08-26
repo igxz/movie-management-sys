@@ -1,21 +1,27 @@
 export interface IResponseError {
-    error: string;
-    data: null;
+  error: string;
+  data: null;
 }
 
 export interface IResponseData<T> {
-    error: '';
-    data: T;
+  error: '';
+  data: T;
 }
 
 export interface IResponsePageData<T> {
-    error: '';
-    total: number;
-    data: T[];
+  error: '';
+  total: number;
+  data: T[];
 }
 
 export interface ISearchCondition {
-    page?: number;
-    limit?: number;
-    key?: string;
+  page?: number;
+  limit?: number;
+  key?: string;
+}
+
+export enum SwitchType {
+  isPopular = 'isPopular',
+  isComing = 'isComing',
+  isClassic = 'isClassic',
 }

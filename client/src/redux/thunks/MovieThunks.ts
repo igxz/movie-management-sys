@@ -1,5 +1,5 @@
 import { ThunkAction } from 'redux-thunk';
-import { ISearchCondition } from '../../services/CommonTypes';
+import { ISearchCondition, SwitchType } from '../../services/CommonTypes';
 import { MovieService } from '../../services/MovieService';
 import MovieAction, { MovieActionTypes } from '../actions/MovieAction';
 import { RootState } from '../store';
@@ -30,6 +30,25 @@ const fetchMovies = (
   };
 };
 
+// update toggle attributes of the movie
+const updateMovieToggleProperties = (
+  newVal: boolean,
+  movieId: string,
+  type: SwitchType
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+): ThunkAction<Promise<void>, RootState, any, MovieActionTypes> => {
+  return async (dispatch) => {
+    //update the state in the state
+   dispatch(MovieAction.changeSwitchAction(newVal, movieId, type));
+
+   //update the record in the database
+   await MovieService.update(movieId, {
+    [type]: newVal,
+   })
+  };
+}
+
+
 //delete a movie from the database
 const deleteMovie = (
   id: string
@@ -53,4 +72,5 @@ const deleteMovie = (
 export {
   fetchMovies,
   deleteMovie,
+  updateMovieToggleProperties
 };

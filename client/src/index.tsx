@@ -25,7 +25,7 @@ root.render(
 //   isComing: true,
 //   isPopular: true,
 //   isClassic: false,
-// };
+// }; 
 
 // const data = await MovieService.getMovieById('66bdc36dcfb14028eac100aa');
 // const data = await MovieService.getMovies({limit: 11, key: 'Fish'});

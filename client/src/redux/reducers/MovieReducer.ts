@@ -9,6 +9,7 @@ import {
   SaveMoviesAction,
   SetLoadingAction,
   SetSearchConditionAction,
+  UpdateSwitchAction,
 } from '../actions/MovieAction';
 
 export type IMovieSearchCriteria = Required<ISearchCondition>;
@@ -86,6 +87,36 @@ const deleteMovie: MovieReducer<DeleteMoviesAction> = (
   };
 };
 
+const updateMovieSwitch: MovieReducer<UpdateSwitchAction> = (
+  state = defaultState,
+  action
+) => { 
+  // find the movie that matches the id
+  const movie = state.data.find(m=> m._id === action.payload.movieId);
+  if(!movie){
+    return state;
+  }
+
+  // clone the movie and update it
+  const newMovie = {...movie};
+  newMovie[action.payload.type] = action.payload.newVal;
+  
+  // update the updated movie into state
+  const newMovies = state.data.map(m =>{
+    if(m._id === action.payload.movieId){
+      return newMovie;
+    }
+    return m;
+  })
+
+  // return new state
+  return {
+    ...state,
+    data: newMovies
+  }
+
+};
+
 const movieReducer = (
   state: IMovieState = defaultState,
   action: MovieActionTypes
@@ -99,6 +130,8 @@ const movieReducer = (
       return setMovieSearchCriteria(state, action);
     case 'movie_setLoading':
       return setIsLoading(state, action);
+      case 'movie_updateSwitchAction':
+      return updateMovieSwitch(state, action);
     default:
       return state;
   }
