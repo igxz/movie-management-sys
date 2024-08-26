@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useAppDispatch } from '../../redux/store';
 import MovieTable from "../../components/MovieTable";
-import { fetchMovies } from '../../redux/thunks/MovieThunks'; // Import the fetchMovies thunk
+import { deleteMovie, fetchMovies } from '../../redux/thunks/MovieThunks'; // Import the fetchMovies thunk
+import { updateMovieToggleProperties } from '../../redux/thunks/MovieThunks';
+import { SwitchType } from '../../services/CommonTypes';
 
 const MovieList: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -11,8 +13,25 @@ const MovieList: React.FC = () => {
     dispatch(fetchMovies({ page: 1, limit: 40, key: '' })); // Example of search conditions
   }, [dispatch]); // Empty dependency array to run once on mount
 
+    // Memoized function to handle switch changes
+    const handleSwitchChange = useCallback(
+      (checked: boolean, movieId: string, switchType: SwitchType) => {
+        dispatch(updateMovieToggleProperties(checked, movieId, switchType));
+      },
+      [dispatch]
+    );
+
+    // Memoized function to handle delete
+    const handleDelete = useCallback(
+      async (id: string) => {
+        await dispatch(deleteMovie(id));
+      },
+      [dispatch],
+    )
+    
+
   return (
-    <MovieTable />
+    <MovieTable onSwitchChange={handleSwitchChange} onDelete={handleDelete}/>
   );
 }
 

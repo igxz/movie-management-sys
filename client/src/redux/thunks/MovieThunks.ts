@@ -44,7 +44,7 @@ const updateMovieToggleProperties = (
    //update the record in the database
    await MovieService.update(movieId, {
     [type]: newVal,
-   })
+   }) 
   };
 }
 

@@ -1,32 +1,35 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../redux/store';
-import { Table, Spin, Switch } from 'antd';
+import { RootState } from '../redux/store';
+import { Table, Spin, Switch, Button, Popconfirm, message } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/es/table';
 import { IMovie } from '../services/MovieService';
-import  { updateMovieToggleProperties } from "../redux/thunks/MovieThunks";
 import defaultPosterImg from '../assets/defaultposter.png';
 import { SwitchType } from '../services/CommonTypes';
+import { NavLink } from 'react-router-dom';
+
+interface IMovieTableProps {
+  onSwitchChange: (
+    checked: boolean,
+    movieId: string,
+    switchType: SwitchType
+  ) => void;
+  onDelete: (movieId: string) => Promise<void>;
+}
 
 const posterStyle: React.CSSProperties = {
-    width: '2em',
-    border: '2px solid #eee',
-  };
+  width: '2em',
+  border: '2px solid #eee',
+};
 
-const MovieTable: React.FC = () => {
+const MovieTable: React.FC<IMovieTableProps> = ({
+  onSwitchChange,
+  onDelete,
+}) => {
   // Select the necessary data from the Redux store
   const data = useSelector((state: RootState) => state.movie.data);
   const isLoading = useSelector((state: RootState) => state.movie.isLoading);
-  const dispatch = useAppDispatch();
-
-  // Memoized function to handle switch changes
-  const handleSwitchChange = useCallback(
-    (checked: boolean, movieId: string, switchType: SwitchType) => {
-      dispatch(updateMovieToggleProperties(checked, movieId, switchType));
-    },
-    [dispatch]
-  );
 
   // Define columns using useMemo to avoid recalculating on every render
   const columns = useMemo<ColumnsType<IMovie>>(
@@ -35,7 +38,9 @@ const MovieTable: React.FC = () => {
         title: 'Poster',
         dataIndex: 'poster',
         key: 'poster',
-        render: (poster) => <img style={posterStyle} src={poster || defaultPosterImg} />,
+        render: (poster) => (
+          <img style={posterStyle} src={poster || defaultPosterImg} />
+        ),
       },
       {
         title: 'Name',
@@ -58,50 +63,90 @@ const MovieTable: React.FC = () => {
         title: 'Show Time',
         dataIndex: 'showTimeInMinutes',
         key: 'showTimeInMinutes',
-        render: (showTime) => `${showTime} Mins`, 
+        render: (showTime) => `${showTime} Mins`,
       },
       {
         title: 'Blockbuster',
         dataIndex: 'isPopular',
         key: 'isPopular',
-        render: (_, record) => (<Switch
+        render: (_, record) => (
+          <Switch
             checkedChildren={<CheckOutlined />}
             unCheckedChildren={<CloseOutlined />}
             checked={record.isPopular}
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            onChange={(newValue) => handleSwitchChange(newValue, record._id!, SwitchType.isPopular)}
-          />)
+            onChange={(newValue) =>
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              onSwitchChange(newValue, record._id!, SwitchType.isPopular)
+            }
+          />
+        ),
       },
       {
         title: 'Classic',
         dataIndex: 'isClassic',
         key: 'isClassic',
-        render: (_, record) => (<Switch
+        render: (_, record) => (
+          <Switch
             checkedChildren={<CheckOutlined />}
             unCheckedChildren={<CloseOutlined />}
             checked={record.isClassic}
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            onChange={(newValue) => handleSwitchChange(newValue, record._id!, SwitchType.isClassic)}
-          />)
+            onChange={(newValue) =>
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              onSwitchChange(newValue, record._id!, SwitchType.isClassic)
+            }
+          />
+        ),
       },
       {
         title: 'Coming Soon',
         dataIndex: 'isComing',
         key: 'isComing',
-        render: (_, record) => (<Switch
+        render: (_, record) => (
+          <Switch
             checkedChildren={<CheckOutlined />}
             unCheckedChildren={<CloseOutlined />}
             checked={record.isComing}
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            onChange={(newValue) => handleSwitchChange(newValue, record._id!, SwitchType.isComing)}
-          />)
+            onChange={(newValue) =>
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              onSwitchChange(newValue, record._id!, SwitchType.isComing)
+            }
+          />
+        ),
+      },
+      {
+        title: 'Edit',
+        dataIndex: '_id',
+        key: '_id',
+        render: (id) => (
+          <div>
+            <NavLink to={'/movie/edit/' + id}>
+              <Button type='primary' size='small'>
+                Edit
+              </Button>
+            </NavLink>
+            <Popconfirm
+              title='Delete the movie'
+              description='Are you sure to delete this movie?'
+              onConfirm={async () => {
+                await onDelete(id);
+                message.success('Moive deleted successfully!');
+              }}
+              okText='Yes'
+              cancelText='No'
+            >
+              <Button type='primary' danger size='small'>
+                Delete
+              </Button>
+            </Popconfirm>
+          </div>
+        ),
       },
     ],
     []
   ); // Empty dependency array because columns do not depend on props or state
 
   if (isLoading) {
-    return <Spin tip="Loading" size="large" />;
+    return <Spin tip='Loading' size='large' />;
   }
 
   return (
