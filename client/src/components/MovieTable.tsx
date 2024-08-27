@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { Table, Spin, Switch, Button, Popconfirm, message } from 'antd';
+import { Table, Switch, Button, Popconfirm, message } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { ColumnsType } from 'antd/es/table';
+import { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { IMovie } from '../services/MovieService';
 import defaultPosterImg from '../assets/defaultposter.png';
 import { SwitchType } from '../services/CommonTypes';
@@ -16,6 +16,7 @@ interface IMovieTableProps {
     switchType: SwitchType
   ) => void;
   onDelete: (movieId: string) => Promise<void>;
+  onChange: (newPage: number) => void;
 }
 
 const posterStyle: React.CSSProperties = {
@@ -26,10 +27,37 @@ const posterStyle: React.CSSProperties = {
 const MovieTable: React.FC<IMovieTableProps> = ({
   onSwitchChange,
   onDelete,
+  onChange,
 }) => {
   // Select the necessary data from the Redux store
+  const movieRecordState = useSelector((state: RootState) => state.movie);
   const data = useSelector((state: RootState) => state.movie.data);
   const isLoading = useSelector((state: RootState) => state.movie.isLoading);
+
+  const handleChange = useCallback(
+    (pagination: TablePaginationConfig) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      onChange(pagination.current!);
+    },
+    [onChange]
+  );
+
+  const getPaginationConfig = useCallback(():
+    | TablePaginationConfig
+    | false
+    | undefined => {
+    if (movieRecordState.total === 0) {
+      return false;
+    }
+    return {
+      position: ['bottomRight'],
+      current: movieRecordState.searchCriteria.page,
+      pageSize: movieRecordState.searchCriteria.limit,
+      total: movieRecordState.total,
+      showTotal: (total, range) => `${range[0]}-${range[1]} of ${total}`,
+      showQuickJumper: true,
+    };
+  }, [movieRecordState]);
 
   // Define columns using useMemo to avoid recalculating on every render
   const columns = useMemo<ColumnsType<IMovie>>(
@@ -39,7 +67,11 @@ const MovieTable: React.FC<IMovieTableProps> = ({
         dataIndex: 'poster',
         key: 'poster',
         render: (poster) => (
-          <img style={posterStyle} src={poster || defaultPosterImg} />
+          <img
+            alt='movie_poster'
+            style={posterStyle}
+            src={poster || defaultPosterImg}
+          />
         ),
       },
       {
@@ -142,18 +174,25 @@ const MovieTable: React.FC<IMovieTableProps> = ({
         ),
       },
     ],
-    []
+    [onDelete, onSwitchChange]
   ); // Empty dependency array because columns do not depend on props or state
 
-  if (isLoading) {
-    return <Spin tip='Loading' size='large' />;
-  }
+  // if (isLoading) {
+  //   return <Spin tip='Loading' size='large' fullscreen/>;
+  // }
 
   return (
     <div>
       <h2>Movie List Page</h2>
 
-      <Table dataSource={data} columns={columns} rowKey='_id' />
+      <Table
+        dataSource={data}
+        columns={columns}
+        rowKey='_id'
+        pagination={getPaginationConfig()}
+        onChange={handleChange}
+        loading={{ spinning: isLoading, size: 'large'}} // 'delay' property doesn't work
+      />
     </div>
   );
 };
