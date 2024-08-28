@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useAppDispatch } from '../../redux/store';
 import MovieTable from "../../components/MovieTable";
+import MovieAction from "../../redux/actions/MovieAction";
 import { deleteMovie, fetchMovies, updateMovieToggleProperties} from '../../redux/thunks/MovieThunks'; // Import the fetchMovies thunk
 import { SwitchType } from '../../services/CommonTypes';
 
@@ -9,7 +10,7 @@ const MovieList: React.FC = () => {
 
   useEffect(() => {
     // Dispatch the fetchMovies thunk when the component mounts
-    dispatch(fetchMovies({ page: 1, limit: 8, key: '' })); // Example of search conditions
+    dispatch(fetchMovies({ page: 1, limit: 8, key: 'Matrix' })); // Example of search conditions
   }, [dispatch]); // Empty dependency array to run once on mount
 
     // Memoized function to handle switch changes
@@ -35,10 +36,25 @@ const MovieList: React.FC = () => {
       },
       [dispatch],
     )
+
+    // Memoized function to handle keywoard chenge
+    const handleSearchKeyChange = useCallback(
+      (keyword: string) => {
+       dispatch(MovieAction.setSearchCriteriaAction({key: keyword}));
+     },
+     [dispatch],
+    )
+     // Memoized function to handle new keywords search
+    const handleSearch = useCallback(
+      () => {
+       dispatch(fetchMovies({ page: 1}));
+     },
+     [dispatch],
+   )
     
 
   return (
-    <MovieTable onSwitchChange={handleSwitchChange} onDelete={handleDelete} onChange={handleChange}/>
+    <MovieTable onSwitchChange={handleSwitchChange} onDelete={handleDelete} onChange={handleChange} onSearchKeyChange={handleSearchKeyChange} onSearch={handleSearch}/>
   );
 }
 

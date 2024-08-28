@@ -1,13 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { Table, Switch, Button, Popconfirm, message } from 'antd';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Table, Switch, Button, Popconfirm, message, Input, Space } from 'antd';
+import { CheckOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { IMovie } from '../services/MovieService';
 import defaultPosterImg from '../assets/defaultposter.png';
 import { SwitchType } from '../services/CommonTypes';
 import { NavLink } from 'react-router-dom';
+import { FilterDropdownProps } from 'antd/es/table/interface';
 
 interface IMovieTableProps {
   onSwitchChange: (
@@ -17,6 +18,8 @@ interface IMovieTableProps {
   ) => void;
   onDelete: (movieId: string) => Promise<void>;
   onChange: (newPage: number) => void;
+  onSearchKeyChange: (keyword: string) => void;
+  onSearch: ()=> void;
 }
 
 const posterStyle: React.CSSProperties = {
@@ -28,6 +31,8 @@ const MovieTable: React.FC<IMovieTableProps> = ({
   onSwitchChange,
   onDelete,
   onChange,
+  onSearchKeyChange,
+  onSearch,
 }) => {
   // Select the necessary data from the Redux store
   const movieRecordState = useSelector((state: RootState) => state.movie);
@@ -59,6 +64,43 @@ const MovieTable: React.FC<IMovieTableProps> = ({
     };
   }, [movieRecordState]);
 
+  const getSearchDropdown = useCallback((props: FilterDropdownProps) => {
+    console.log(props);
+    return (
+      <div style={{ padding: 8 }} >
+        <Input
+          style={{ marginBottom: 8, display: 'block' }}
+          value={movieRecordState.searchCriteria.key}
+          onChange={ e => {
+            onSearchKeyChange(e.target.value);
+          }}
+          onPressEnter={onSearch}
+        />
+        <Space>
+          <Button
+            type="primary"
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+            onClick={onSearch}
+          >
+            Search
+          </Button>
+          <Button
+            size="small"
+            style={{ width: 90 }}
+            onClick={() => {
+              onSearchKeyChange('');
+              onSearch();
+            }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    );
+  }, [movieRecordState.searchCriteria.key, onSearchKeyChange, onSearch]);
+
   // Define columns using useMemo to avoid recalculating on every render
   const columns = useMemo<ColumnsType<IMovie>>(
     () => [
@@ -78,6 +120,10 @@ const MovieTable: React.FC<IMovieTableProps> = ({
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
+        filterDropdown: getSearchDropdown,
+        filterIcon: (filtered: boolean) => (
+          <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
+        ),
       },
       {
         title: 'Type',
@@ -174,7 +220,7 @@ const MovieTable: React.FC<IMovieTableProps> = ({
         ),
       },
     ],
-    [onDelete, onSwitchChange]
+    [onDelete, onSwitchChange, getSearchDropdown]
   ); // Empty dependency array because columns do not depend on props or state
 
   // if (isLoading) {
@@ -191,7 +237,7 @@ const MovieTable: React.FC<IMovieTableProps> = ({
         rowKey='_id'
         pagination={getPaginationConfig()}
         onChange={handleChange}
-        loading={{ spinning: isLoading, size: 'large'}} // 'delay' property doesn't work
+        loading={{ spinning: isLoading, size: 'large' }} // 'delay' property doesn't work
       />
     </div>
   );
