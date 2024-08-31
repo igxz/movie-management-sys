@@ -10,7 +10,7 @@ const MovieList: React.FC = () => {
 
   useEffect(() => {
     // Dispatch the fetchMovies thunk when the component mounts
-    dispatch(fetchMovies({ page: 1, limit: 8, key: 'Matrix' })); // Example of search conditions
+    dispatch(fetchMovies({ page: 1, limit: 8, key: '' })); // Example of search conditions
   }, [dispatch]); // Empty dependency array to run once on mount
 
     // Memoized function to handle switch changes
@@ -54,7 +54,10 @@ const MovieList: React.FC = () => {
     
 
   return (
+    <>
+    <h2>Movie List Page</h2>
     <MovieTable onSwitchChange={handleSwitchChange} onDelete={handleDelete} onChange={handleChange} onSearchKeyChange={handleSearchKeyChange} onSearch={handleSearch}/>
+    </>
   );
 }
 

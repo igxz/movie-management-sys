@@ -229,8 +229,6 @@ const MovieTable: React.FC<IMovieTableProps> = ({
 
   return (
     <div>
-      <h2>Movie List Page</h2>
-
       <Table
         dataSource={data}
         columns={columns}

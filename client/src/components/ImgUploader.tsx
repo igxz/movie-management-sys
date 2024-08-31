@@ -7,7 +7,7 @@ import { IResponseData, IResponseError } from '../services/CommonTypes';
 
 interface IImgUploaderProps {
   url?: string;
-  onChange: (imgUrl: string) => void;
+  onChange?: (imgUrl: string) => void;
 }
 
 const uploadButton = (
@@ -62,8 +62,10 @@ const ImgUploader: React.FC<IImgUploaderProps> = (props) => {
           message.error('Upload failed! ' + resp.error);
         } else {
           // Trigger the callback with the received data
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          props.onChange(resp.data!);
+          if(props.onChange) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            props.onChange(resp.data!);
+          } 
         }
       } catch (error) {
         // Handle any unexpected errors during the request
@@ -91,7 +93,9 @@ const ImgUploader: React.FC<IImgUploaderProps> = (props) => {
         fileList={getFileList}
         customRequest={handleRequest}
         onRemove={() => {
-          props.onChange('');
+          if(props.onChange){
+            props.onChange('');
+          }
         }}
         onPreview={handlePreview}
       >
