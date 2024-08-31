@@ -63,7 +63,7 @@ export class MovieService {
     const { data } = await axios.get('/api/movie/', { params: condition });
 
     // option 2 to delay of 30 milliseconds
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 20));
 
     return data;
   }

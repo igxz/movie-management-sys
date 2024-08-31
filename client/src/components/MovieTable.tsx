@@ -8,7 +8,6 @@ import { IMovie } from '../services/MovieService';
 import defaultPosterImg from '../assets/defaultposter.png';
 import { SwitchType } from '../services/CommonTypes';
 import { NavLink } from 'react-router-dom';
-import { FilterDropdownProps } from 'antd/es/table/interface';
 
 interface IMovieTableProps {
   onSwitchChange: (
@@ -64,8 +63,8 @@ const MovieTable: React.FC<IMovieTableProps> = ({
     };
   }, [movieRecordState]);
 
-  const getSearchDropdown = useCallback((props: FilterDropdownProps) => {
-    console.log(props);
+  const getSearchDropdown = useCallback(() => {
+    // console.log(props);
     return (
       <div style={{ padding: 8 }} >
         <Input
